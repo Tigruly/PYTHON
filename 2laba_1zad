@@ -1,0 +1,57 @@
+```
+import sys
+
+def proverka_faila(imya_faila):
+    try:
+        with open(imya_faila, "r", encoding="utf-8") as f:
+            stroki = f.readlines()
+        return stroki
+    except FileNotFoundError:
+        print("Fail ne nayden")
+        return []
+    except Exception:
+        print("Oshibka chteniya faila")
+        return []
+
+def zadanie_1():
+    put_k_failu = input("Vvedite put' k failu: ")
+    stroki = proverka_faila(put_k_failu)
+    slovar_ocheredey = {}
+    
+    for stroka in stroki:
+        stroka = stroka.strip()
+        if not stroka:
+            continue
+        try:
+            bukva = stroka[0]
+            if bukva not in slovar_ocheredey:
+                slovar_ocheredey[bukva] = []
+            slovar_ocheredey[bukva].append(stroka)
+        except IndexError:
+            continue
+
+    spisok_klyuchey = list(slovar_ocheredey.keys())
+    spisok_klyuchey.sort()
+
+    if not spisok_klyuchey:
+        print("Ocheredi pusty")
+        return
+
+    finalny_vyvod = []
+    
+    while True:
+        pusto = True
+        for klyuch in spisok_klyuchey:
+            ochered = slovar_ocheredey[klyuch]
+            if len(ochered) > 0:
+                element = ochered.pop(0)
+                finalny_vyvod.append(element)
+                pusto = False
+        if pusto:
+            break
+    
+    print(", ".join(finalny_vyvod))
+
+if __name__ == "__main__":
+    zadanie_1()
+```
