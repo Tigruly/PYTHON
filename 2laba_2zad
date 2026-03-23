@@ -1,0 +1,51 @@
+def vvod_naturnogo_chisla():
+    try:
+        znachenie = int(input("Vvedite N: "))
+        if znachenie <= 0:
+            raise ValueError
+        return znachenie
+    except ValueError:
+        print("Oshibka: nuzhno naturalnoe chislo > 0")
+        return 0
+
+def zadanie_2():
+    n = vvod_naturnogo_chisla()
+    if n == 0:
+        return
+
+    spisok_konteynerov = []
+    for i in range(n):
+        try:
+            stroka = input(f"Konteyner {i + 1}: ")
+            if stroka == "0":
+                spisok_konteynerov.append([])
+            else:
+                spisok_konteynerov.append(stroka.split())
+        except Exception:
+            spisok_konteynerov.append([])
+
+    spisok_deystviy = []
+    
+    while True:
+        peremeschenie_bilo = False
+        for i in range(n):
+            if len(spisok_konteynerov[i]) > 0:
+                verh_element = spisok_konteynerov[i][-1]
+                try:
+                    tip = int(verh_element)
+                    if 1 <= tip <= n:
+                        nomer_target = tip - 1
+                        if i != nomer_target:
+                            spisok_konteynerov[nomer_target].append(spisok_konteynerov[i].pop())
+                            spisok_deystviy.append((i + 1, nomer_target + 1))
+                            peremeschenie_bilo = True
+                except ValueError:
+                    continue
+        if not peremeschenie_bilo:
+            break
+    
+    for deystvie in spisok_deystviy:
+        print(f"{deystvie[0]} {deystvie[1]}")
+
+if __name__ == "__main__":
+    zadanie_2()
