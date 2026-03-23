@@ -1,0 +1,69 @@
+def obhod_v_glubinu(tekushaya, roditel, tekushaya_glubina, spisok_svyazey, massiv_roditeley, massiv_glubin, massiv_posesheniy):
+    massiv_posesheniy[tekushaya] = True
+    massiv_roditeley[tekushaya] = roditel
+    massiv_glubin[tekushaya] = tekushaya_glubina
+    for sosed in spisok_svyazey[tekushaya]:
+        if not massiv_posesheniy[sosed]:
+            obhod_v_glubinu(sosed, tekushaya, tekushaya_glubina + 1, spisok_svyazey, massiv_roditeley, massiv_glubin, massiv_posesheniy)
+
+def zadanie_3():
+    imya_faila = input("Vvedite put' k failu: ")
+    try:
+        with open(imya_faila, "r", encoding="utf-8") as f:
+            stroki_faila = f.readlines()
+    except FileNotFoundError:
+        print("Fail ne nayden")
+        return
+
+    matrica = []
+    for stroka in stroki_faila:
+        try:
+            row = list(map(int, stroka.split()))
+            matrica.append(row)
+        except ValueError:
+            continue
+    
+    razmer_matricy = len(matrica)
+    if razmer_matricy == 0:
+        print("Pustaya matrica")
+        return
+
+    spisok_svyazey = [[] for _ in range(razmer_matricy)]
+    for i in range(razmer_matricy):
+        for j in range(razmer_matricy):
+            if matrica[i][j] == 1:
+                spisok_svyazey[i].append(j)
+
+    try:
+        vershina_u = int(input("Vvedite vershinu u: "))
+        vershina_v = int(input("Vvedite vershinu v: "))
+        if vershina_u < 0 or vershina_u >= razmer_matricy or vershina_v < 0 or vershina_v >= razmer_matricy:
+            raise ValueError
+    except ValueError:
+        print("Oshibka indeksov vershin")
+        return
+
+    massiv_roditeley = [-1] * razmer_matricy
+    massiv_glubin = [0] * razmer_matricy
+    massiv_posesheniy = [False] * razmer_matricy
+    
+    obhod_v_glubinu(0, -1, 0, spisok_svyazey, massiv_roditeley, massiv_glubin, massiv_posesheniy)
+
+    glubina_u = massiv_glubin[vershina_u]
+    glubina_v = massiv_glubin[vershina_v]
+
+    while glubina_u > glubina_v:
+        vershina_u = massiv_roditeley[vershina_u]
+        glubina_u -= 1
+    while glubina_v > glubina_u:
+        vershina_v = massiv_roditeley[vershina_v]
+        glubina_v -= 1
+
+    while vershina_u != vershina_v:
+        vershina_u = massiv_roditeley[vershina_u]
+        vershina_v = massiv_roditeley[vershina_v]
+
+    print(f"LCA: {vershina_u}")
+
+if __name__ == "__main__":
+    zadanie_3()
