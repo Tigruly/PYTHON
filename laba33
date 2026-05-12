@@ -1,40 +1,27 @@
-
 import csv
 import sys
 from docxtpl import DocxTemplate
 
-# Пути к нашим файлам
 csv_filename = "/Users/sleepsleep/Downloads/data_marathon.csv"
 template_filename = "/Users/sleepsleep/Downloads/template.docx"
 output_filename = "/Users/sleepsleep/Downloads/marathons_report.docx"
 
-# Создаем пустой словарь, куда будем собирать данные.
-# Структура будет такой: { '2020': { 'Tokyo': {'Male': {...}, 'Female': {...}} } }
 marathons_dict = {}
 
-# 1. ЧИТАЕМ ДАННЫЕ ИЗ CSV
 try:
     with open(csv_filename, 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
-
-        # Пропускаем первую строку, если там заголовки (Год, Имя, Пол и т.д.)
-        # Если в твоем файле заголовков нет, удали строчку ниже!
         next(reader)
 
         for row in reader:
-            # Распаковываем строку списка в отдельные переменные для удобства
             year, name, gender, country, time, city = row
 
-            # Если такого года еще нет в словаре, создаем для него пустой словарь
             if year not in marathons_dict:
                 marathons_dict[year] = {}
 
-            # Если в этом году такого города еще нет, тоже создаем пустой словарь
             if city not in marathons_dict[year]:
-                # Сразу заготовим пустые места для мужчины и женщины
                 marathons_dict[year][city] = {'Male': None, 'Female': None}
 
-            # Записываем данные победителя
             marathons_dict[year][city][gender] = {
                 'name': name,
                 'time': time
@@ -44,21 +31,15 @@ except FileNotFoundError:
     print(f"Ошибка: Не могу найти файл {csv_filename}!")
     sys.exit(1)
 
-# 2. ГОТОВИМ ДАННЫЕ ДЛЯ ШАБЛОНА JINJA2
-# docxtpl любит, когда данные передаются в виде списков, а не сложных словарей
 years_list = []
 
-# Проходимся по нашему словарю, заодно сортируем года по возрастанию
 for year in sorted(marathons_dict.keys()):
-
-    marathons_in_year = []  # Список марафонов для конкретного года
+    marathons_in_year = []
 
     for city, results in marathons_dict[year].items():
-        # Достаем результаты. Если кого-то нет (вдруг), ставим заглушку
         male = results['Male'] if results['Male'] else {'name': 'Нет данных', 'time': '-'}
         female = results['Female'] if results['Female'] else {'name': 'Нет данных', 'time': '-'}
 
-        # Формируем словарь для одного марафона (города)
         marathons_in_year.append({
             'city': city,
             'male_name': male['name'],
@@ -67,26 +48,18 @@ for year in sorted(marathons_dict.keys()):
             'female_time': female['time']
         })
 
-    # Добавляем весь год в итоговый список
     years_list.append({
         'year': year,
         'marathons': marathons_in_year
     })
 
-# Главный словарь (контекст), который мы передадим в Word
 context = {'years': years_list}
 
-# 3. ГЕНЕРИРУЕМ WORD ДОКУМЕНТ
 try:
-    print("Создаем документ...")
     doc = DocxTemplate(template_filename)
-
-    # Вставляем наши данные в шаблон
     doc.render(context)
-
-    # Сохраняем результат
     doc.save(output_filename)
-    print(f"Успех! Файл {output_filename} готов. Проверь папку.")
+    print(f"Успех! Файл {output_filename} готов.")
 
 except FileNotFoundError:
     print(f"Ошибка: Не могу найти шаблон {template_filename}!")
