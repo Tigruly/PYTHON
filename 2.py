@@ -1,0 +1,48 @@
+import csv
+import sys
+
+input_file = 'countries.csv'
+
+try:
+    with open(input_file, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        header = next(reader)
+        countries = list(reader)
+except FileNotFoundError:
+    print(f"Ошибка FileNotFoundError: Файл '{input_file}' не найден. Проверьте правильность пути.")
+    sys.exit(1)
+except StopIteration:
+    print(f"Ошибка StopIteration: Файл '{input_file}' абсолютно пуст. Нет данных для обработки.")
+    sys.exit(1)
+except PermissionError:
+    print(f"Ошибка PermissionError: Нет прав на чтение файла '{input_file}'.")
+    sys.exit(1)
+except Exception as e:
+    print(f"Произошла непредвиденная ошибка при чтении файла: {e}")
+    sys.exit(1)
+
+
+try:
+    min_income = float(input("Введите минимальный показатель доходов: "))
+    max_income = float(input("Введите максимальный показатель доходов: "))
+
+    filtered_by_income = list(filter(lambda row: min_income <= float(row[2]) <= max_income, countries))
+    sorted_by_inflation = sorted(countries, key=lambda row: float(row[3]))
+
+except ValueError as e:
+    print(f"Ошибка ValueError: Ожидалось число, но получены некорректные данные (при вводе или внутри CSV-файла).\nДетали: {e}")
+    sys.exit(1)
+
+
+with open('filtered_income.csv', 'w', encoding='utf-8', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(header)
+    writer.writerows(filtered_by_income)
+print("Файл filtered_income.csv успешно создан.")
+
+
+with open('sorted_inflation.csv', 'w', encoding='utf-8', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(header)
+    writer.writerows(sorted_by_inflation)
+print("Файл sorted_inflation.csv успешно создан.")

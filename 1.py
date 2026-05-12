@@ -1,0 +1,28 @@
+import json
+import sys
+
+
+def main():
+    try:
+        with open("animals.json", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"Ошибка загрузки данных: {e}")
+        sys.exit(1)
+
+    animals = data.get("animals", [])
+
+    birds = [a for a in animals if a.get("animal_type") == "Bird"]
+    print("Птицы:")
+    for bird in birds:
+        print(f"- {bird['name']}")
+
+    diurnal_count = sum(1 for a in animals if a.get("active_time") == "Diurnal")
+    print(f"\nКоличество дневных животных: {diurnal_count}")
+
+    lightest = min(animals, key=lambda x: float(x.get("weight_min", float("inf"))))
+    print(f"\nЖивотное с наименьшим весом: {lightest['name']} ({lightest['weight_min']} кг)")
+
+
+if __name__ == "__main__":
+    main()

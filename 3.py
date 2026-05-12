@@ -1,0 +1,67 @@
+import csv
+import sys
+from docxtpl import DocxTemplate
+
+csv_filename = "data_marathon.csv"
+template_filename = "template.docx"
+output_filename = "marathons_report.docx"
+
+marathons_dict = {}
+
+try:
+    with open(csv_filename, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        next(reader)
+
+        for row in reader:
+            year, name, gender, country, time, city = row
+
+            if year not in marathons_dict:
+                marathons_dict[year] = {}
+
+            if city not in marathons_dict[year]:
+                marathons_dict[year][city] = {'Male': None, 'Female': None}
+
+            marathons_dict[year][city][gender] = {
+                'name': name,
+                'time': time
+            }
+
+except FileNotFoundError:
+    print(f"Ошибка: Не могу найти файл {csv_filename}!")
+    sys.exit(1)
+
+years_list = []
+
+for year in sorted(marathons_dict.keys()):
+    marathons_in_year = []
+
+    for city, results in marathons_dict[year].items():
+        male = results['Male'] if results['Male'] else {'name': 'Нет данных', 'time': '-'}
+        female = results['Female'] if results['Female'] else {'name': 'Нет данных', 'time': '-'}
+
+        marathons_in_year.append({
+            'city': city,
+            'male_name': male['name'],
+            'male_time': male['time'],
+            'female_name': female['name'],
+            'female_time': female['time']
+        })
+
+    years_list.append({
+        'year': year,
+        'marathons': marathons_in_year
+    })
+
+context = {'years': years_list}
+
+try:
+    doc = DocxTemplate("C:/Users/t.vanesyan/PycharmProjects/pythonProject/template.docx")
+    doc.render(context)
+    doc.save(output_filename)
+    print(f"Успех! Файл {output_filename} готов.")
+
+except FileNotFoundError:
+    print(f"Ошибка: Не могу найти шаблон {template_filename}!")
+except Exception as e:
+    print(f"Произошла ошибка при создании документа: {e}")
