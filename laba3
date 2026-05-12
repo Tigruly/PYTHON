@@ -1,11 +1,7 @@
-
-
-
-
 import csv
 import sys
 
-input_file = '/Users/sleepsleep/Downloads/countries.csv'
+input_file = 'countries.csv'
 
 try:
     with open(input_file, 'r', encoding='utf-8') as file:
@@ -38,14 +34,14 @@ except ValueError as e:
     sys.exit(1)
 
 
-with open('/Users/sleepsleep/Downloads/filtered_income.csv', 'w', encoding='utf-8', newline='') as file:
+with open('filtered_income.csv', 'w', encoding='utf-8', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(header)
     writer.writerows(filtered_by_income)
 print("Файл filtered_income.csv успешно создан.")
 
 
-with open('/Users/sleepsleep/Downloads/sorted_inflation.csv', 'w', encoding='utf-8', newline='') as file:
+with open('sorted_inflation.csv', 'w', encoding='utf-8', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(header)
     writer.writerows(sorted_by_inflation)
