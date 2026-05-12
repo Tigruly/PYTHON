@@ -1,0 +1,21 @@
+import json
+import sys
+
+try:
+    with open('animals.json', 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        animals = data['animals']
+except ValueError as e:
+    print(f"Ошибка ValueError: Файл animals.json содержит некорректные данные.\nДетали: {e}")
+    sys.exit(1)
+
+birds = list(filter(lambda x: x.get('animal_type') == 'Bird', animals))
+print("Птицы:")
+for bird in birds:
+    print(f"- {bird['name']}")
+
+diurnal_animals = list(filter(lambda x: x.get('active_time') == 'Diurnal', animals))
+print(f"\nКоличество дневных животных: {len(diurnal_animals)}")
+
+lightest_animal = min(animals, key=lambda x: float(x.get('weight_min', float('inf'))))
+print(f"\nЖивотное с наименьшим весом: {lightest_animal['name']} ({lightest_animal['weight_min']} кг)")
