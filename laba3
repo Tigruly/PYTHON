@@ -1,29 +1,4 @@
-# import csv
-#
-#
-# with open('/Users/sleepsleep/Downloads/countries.csv', 'r', encoding='utf-8') as file:
-#     reader = csv.reader(file)
-#     header = next(reader)
-#     countries = list(reader)
-#
-# min_income = float(input("Введите минимальный показатель доходов: "))
-# max_income = float(input("Введите максимальный показатель доходов: "))
-#
-# filtered_by_income = list(filter(lambda row: min_income <= float(row[2]) <= max_income, countries))
-#
-# with open('/Users/sleepsleep/Downloads/filtered_income.csv', 'w', encoding='utf-8', newline='') as file:
-#     writer = csv.writer(file)
-#     writer.writerow(header)
-#     writer.writerows(filtered_by_income)
-# print("Файл filtered_income.csv успешно создан.")
-#
-# sorted_by_inflation = sorted(countries, key=lambda row: float(row[3]))
-#
-# with open('/Users/sleepsleep/Downloads/sorted_inflation.csv', 'w', encoding='utf-8', newline='') as file:
-#     writer = csv.writer(file)
-#     writer.writerow(header)
-#     writer.writerows(sorted_by_inflation)
-# print("Файл sorted_inflation.csv успешно создан.")
+
 
 
 
